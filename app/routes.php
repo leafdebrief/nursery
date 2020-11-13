@@ -5,6 +5,8 @@ use App\Application\Actions\User\ListUsersAction;
 use App\Application\Actions\User\ViewUserAction;
 use App\Application\Actions\Sensor\ListSensorsAction;
 use App\Application\Actions\Sensor\ViewSensorAction;
+use App\Application\Actions\Statistic\ListStatisticsAction;
+use App\Application\Actions\Statistic\ViewStatisticAction;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\App;
@@ -29,5 +31,10 @@ return function (App $app) {
     $app->group('/sensors', function (Group $group) {
         $group->get('', ListSensorsAction::class);
         $group->get('/{id}', ViewSensorAction::class);
+    });
+
+    $app->group('/statistics', function (Group $group) {
+        $group->get('/{table}', ListStatisticsAction::class);
+        $group->get('/{table}/{id}', ViewStatisticAction::class);
     });
 };
