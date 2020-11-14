@@ -7,6 +7,8 @@ use App\Application\Actions\Sensor\ListSensorsAction;
 use App\Application\Actions\Sensor\ViewSensorAction;
 use App\Application\Actions\Statistic\ListStatisticsAction;
 use App\Application\Actions\Statistic\ViewStatisticAction;
+use App\Application\Actions\Spectrum\ListSpectraAction;
+use App\Application\Actions\Spectrum\ViewSpectrumAction;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\App;
@@ -36,5 +38,10 @@ return function (App $app) {
     $app->group('/statistics', function (Group $group) {
         $group->get('/{table}', ListStatisticsAction::class);
         $group->get('/{table}/{id}', ViewStatisticAction::class);
+    });
+
+    $app->group('/spectra', function (Group $group) {
+        $group->get('', ListSpectraAction::class);
+        $group->get('/{id}', ViewSpectrumAction::class);
     });
 };
