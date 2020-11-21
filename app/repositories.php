@@ -5,10 +5,12 @@ use App\Domain\User\UserRepository;
 use App\Domain\Sensor\SensorRepository;
 use App\Domain\Statistic\StatisticRepository;
 use App\Domain\Spectrum\SpectralRepository;
+use App\Domain\Snapshot\SnapshotRepository;
 use App\Infrastructure\Persistence\User\InMemoryUserRepository;
 use App\Infrastructure\Persistence\Sensor\DatabaseSensorRepository;
 use App\Infrastructure\Persistence\Statistic\DatabaseStatisticRepository;
 use App\Infrastructure\Persistence\Spectrum\DatabaseSpectralRepository;
+use App\Infrastructure\Transients\Snapshot\TransientSnapshotRepository;
 use DI\ContainerBuilder;
 
 return function (ContainerBuilder $containerBuilder) {
@@ -18,5 +20,6 @@ return function (ContainerBuilder $containerBuilder) {
         SensorRepository::class => \DI\autowire(DatabaseSensorRepository::class),
         StatisticRepository::class => \DI\autowire(DatabaseStatisticRepository::class),
         SpectralRepository::class => \DI\autowire(DatabaseSpectralRepository::class),
+        SnapshotRepository::class => \DI\autowire(TransientSnapshotRepository::class),
     ]);
 };

@@ -9,6 +9,7 @@ use App\Application\Actions\Statistic\ListStatisticsAction;
 use App\Application\Actions\Statistic\ViewStatisticAction;
 use App\Application\Actions\Spectrum\ListSpectraAction;
 use App\Application\Actions\Spectrum\ViewSpectrumAction;
+use App\Application\Actions\Snapshot\GetSnapshotAction;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\App;
@@ -20,10 +21,7 @@ return function (App $app) {
         return $response;
     });
 
-    $app->get('/', function (Request $request, Response $response) {
-        $response->getBody()->write('Hello world!');
-        return $response;
-    });
+    $app->get('/', GetSnapshotAction::class);
 
     $app->group('/users', function (Group $group) {
         $group->get('', ListUsersAction::class);
