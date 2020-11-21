@@ -13,7 +13,7 @@ class ViewSpectrumAction extends SpectrumAction
     protected function action(): Response
     {
         $sensorId = (int) $this->resolveArg('id');
-        $sensor = $this->spectralRepository->findSensorOfId($sensorId);
+        $sensor = $this->spectralRepository->findSpectrumOfId($sensorId);
 
         $this->logger->info("Spectrum of id `${sensorId}` was viewed.");
 
