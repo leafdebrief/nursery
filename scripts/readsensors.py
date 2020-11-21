@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import sys
 import time
 import board
@@ -6,6 +7,7 @@ import json
 import adafruit_si7021
 import adafruit_as7341
 from datetime import datetime
+from adafruit_seesaw.seesaw import Seesaw
 
 def convertdate(o):
   if isinstance(o, datetime):
@@ -15,6 +17,7 @@ def convertdate(o):
 i2c = busio.I2C(board.SCL, board.SDA)
 si7021 = adafruit_si7021.SI7021(i2c)
 as7341 = adafruit_as7341.AS7341(i2c)
+atsamd10 = Seesaw(i2c, addr=0x36)
 
 now = datetime.now()
 
@@ -32,7 +35,8 @@ output = {
     as7341.channel_590nm,
     as7341.channel_630nm,
     as7341.channel_680nm
-  ]
+  ],
+  "moisture": atsamd10.moisture_read()
 }
 
 # the result is a JSON string:
