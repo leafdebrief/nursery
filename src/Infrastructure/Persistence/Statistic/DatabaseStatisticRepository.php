@@ -6,6 +6,7 @@ namespace App\Infrastructure\Persistence\Statistic;
 use App\Domain\Statistic\Statistic;
 use App\Domain\Statistic\StatisticNotFoundException;
 use App\Domain\Statistic\StatisticInvalidTableException;
+use App\Domain\Statistic\StatisticInvalidRangeException;
 use App\Domain\Statistic\StatisticRepository;
 
 class DatabaseStatisticRepository implements StatisticRepository
@@ -62,9 +63,40 @@ class DatabaseStatisticRepository implements StatisticRepository
         return $statistic;
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function getAverageFor(string $table, string $range): float
+    {
+        $this->validateTableName($table);
+        $this->validateRange($range);
+        $query = "SELECT AVG(`value`) FROM $table";
+        switch ($range) {
+          case 'day':
+            $query .= " WHERE DAYOFWEEK(`timestamp`) = DAYOFWEEK(NOW())";
+            break;
+          case 'hour':
+            $query .= " WHERE HOUR(`timestamp`) = HOUR(NOW())";
+            break;
+          case 'minute':
+            $query .= " WHERE HOUR(`timestamp`) = HOUR(NOW())AND LENGTH(MINUTE(`timestamp`)) = LENGTH(MINUTE(NOW())) AND LEFT(MINUTE(`timestamp`), 1) = LEFT(MINUTE(NOW()), 1)";
+            break;
+        }
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute();
+        $statistic = $stmt->fetchColumn();
+        return $statistic;
+    }
+
     private function validateTableName(string $table): void {
       if (!in_array($table, ['humidity', 'temperature'])) {
           throw new StatisticInvalidTableException();
+      }
+    }
+
+    private function validateRange(string $range): void {
+      if (!in_array($range, ['minute', 'hour', 'day'])) {
+          throw new StatisticInvalidRangeException();
       }
     }
 }

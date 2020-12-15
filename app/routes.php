@@ -7,6 +7,7 @@ use App\Application\Actions\Sensor\ListSensorsAction;
 use App\Application\Actions\Sensor\ViewSensorAction;
 use App\Application\Actions\Statistic\ListStatisticsAction;
 use App\Application\Actions\Statistic\ViewStatisticAction;
+use App\Application\Actions\Statistic\AverageStatisticAction;
 use App\Application\Actions\Spectrum\ListSpectraAction;
 use App\Application\Actions\Spectrum\ViewSpectrumAction;
 use App\Application\Actions\Snapshot\GetSnapshotAction;
@@ -36,10 +37,19 @@ return function (App $app) {
     $app->group('/statistics', function (Group $group) {
         $group->get('/{table}', ListStatisticsAction::class);
         $group->get('/{table}/{id}', ViewStatisticAction::class);
+        $group->get('/{table}/average/{range}', AverageStatisticAction::class);
     });
 
     $app->group('/spectra', function (Group $group) {
         $group->get('', ListSpectraAction::class);
         $group->get('/{id}', ViewSpectrumAction::class);
+    });
+
+    $app->add(function ($request, $handler) {
+        $response = $handler->handle($request);
+        return $response
+          ->withHeader('Access-Control-Allow-Origin', '*')
+          ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
+          ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
     });
 };

@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import sys
 import time
 import board
@@ -71,4 +72,4 @@ while True:
     except mariadb.Error as e:
         print(f"Error: {e}")
 
-    time.sleep(10)
+    time.sleep(600)
