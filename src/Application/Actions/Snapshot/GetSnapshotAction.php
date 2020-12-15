@@ -13,7 +13,7 @@ class GetSnapshotAction extends SnapshotAction
     protected function action(): Response
     {
         $snapshot = $this->snapshotRepository->getSnapshot();
-        $timestamp = $snapshot->timestamp;
+        $timestamp = $snapshot->getTimestamp();
 
         $this->logger->info("Snapshot with timestamp `${timestamp}` was viewed.");
 

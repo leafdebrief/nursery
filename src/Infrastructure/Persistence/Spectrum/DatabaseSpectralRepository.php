@@ -42,7 +42,7 @@ class DatabaseSpectralRepository implements SpectralRepository
     {
       $stmt = $this->pdo->prepare('SELECT * FROM spectral');
       $stmt->execute();
-      $stmt->setFetchMode(\PDO::FETCH_CLASS, '\App\Domain\Sensor\Sensor');
+      $stmt->setFetchMode(\PDO::FETCH_CLASS, '\App\Domain\Spectrum\Spectrum');
       return $stmt->fetchAll();
     }
 
