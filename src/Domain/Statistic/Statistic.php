@@ -22,6 +22,20 @@ class Statistic implements JsonSerializable
      */
     private $value;
 
+    public function __construct(\StdClass $statistic = null) {
+      if ($statistic) {
+        if (isset($statistic->id)) {
+          $this->id = $statistic->id;
+        }
+        if (isset($statistic->timestamp)) {
+          $this->timestamp = $statistic->timestamp;
+        }
+        if (isset($statistic->value)) {
+          $this->value = $statistic->value;
+        }
+      }
+    }
+
     /**
      * @return int|null
      */
