@@ -9,6 +9,8 @@ use App\Domain\Statistic\StatisticInvalidTableException;
 use App\Domain\Statistic\StatisticInvalidRangeException;
 use App\Domain\Statistic\StatisticRepository;
 
+use App\Domain\Sensor\SensorNotFoundException;
+
 class DatabaseStatisticRepository implements StatisticRepository
 {
     /**
@@ -87,6 +89,21 @@ class DatabaseStatisticRepository implements StatisticRepository
         $statistic = $stmt->fetchColumn();
         return $statistic;
     }
+
+    public function getCurrentStatistic(string $table): Statistic {
+        $path = "/home/pi/nursery/scripts/read$table.py";
+        if (is_readable($path)) {
+          try {
+            $command = escapeshellcmd("sudo /usr/bin/python3 $path");
+            $output = shell_exec($command);
+            return new Statistic(json_decode($output));
+          } catch (\Throwable $th) {
+            throw new \Exception($th->getMessage());
+          }
+        } else {
+          throw new SensorNotFoundException();
+        }
+    } 
 
     private function validateTableName(string $table): void {
       if (!in_array($table, ['humidity', 'temperature'])) {

@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Domain\Statistic;
 
+use App\Domain\Sensor\SensorNotFoundException;
+
 interface StatisticRepository
 {
     /**
@@ -28,4 +30,11 @@ interface StatisticRepository
      * @throws StatisticInvalidRangeException
      */
     public function getAverageFor(string $table, string $range): float;
+
+    /**
+     * @param string $table
+     * @return Statistic
+     * @throws SensorNotFoundException
+     */
+    public function getCurrentStatistic(string $table): Statistic;
 }
