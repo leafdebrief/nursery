@@ -4,31 +4,40 @@ import board
 import busio
 import asyncio
 import adafruit_si7021
-from kasa import SmartStrip
+from kasa import SmartStrip, Discover
 
 # Create library object using our Bus I2C port
 i2c = busio.I2C(board.SCL, board.SDA)
 si7021 = adafruit_si7021.SI7021(i2c)
-strip = SmartStrip("10.0.1.2")
-asyncio.run(strip.update())
 
-while True:
-    humidity = si7021.relative_humidity
+rh_min = 45
+rh_max = 50
 
-    print(f"Humidity: {humidity}% RH")
+devices = asyncio.run(Discover.discover())
 
-    if humidity < 40:
-        for plug in strip.children:
-            if plug.alias == "Nursery humidifier" and not plug.is_on:
-                print("Turning humidifier ON")
-                asyncio.run(plug.turn_on())
-                asyncio.run(strip.update())
+for addr, dev in devices.items():
+    asyncio.run(dev.update())
 
-    if humidity > 50:
-        for plug in strip.children:
-            if plug.alias == "Nursery humidifier" and plug.is_on:
-                print("Turning humidifier OFF")
-                asyncio.run(plug.turn_off())
-                asyncio.run(strip.update())
+    if dev.alias == "Nursery":
+        print("Found humidifier")
 
-    time.sleep(10)
+        while True:
+            humidity = si7021.relative_humidity
+
+            print(f"Humidity: {humidity}% RH")
+
+            if humidity < rh_min:
+                for plug in dev.children:
+                    if plug.alias == "Nursery humidifier" and not plug.is_on:
+                        print("Turning humidifier ON")
+                        asyncio.run(plug.turn_on())
+                        asyncio.run(dev.update())
+
+            if humidity > rh_max:
+                for plug in dev.children:
+                    if plug.alias == "Nursery humidifier" and plug.is_on:
+                        print("Turning humidifier OFF")
+                        asyncio.run(plug.turn_off())
+                        asyncio.run(dev.update())
+
+            time.sleep(10)
