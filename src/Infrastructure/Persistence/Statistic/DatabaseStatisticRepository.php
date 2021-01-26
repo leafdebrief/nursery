@@ -94,7 +94,7 @@ class DatabaseStatisticRepository implements StatisticRepository
         $path = "/home/pi/nursery/scripts/read$table.py";
         if (is_readable($path)) {
           try {
-            $command = escapeshellcmd("sudo /usr/bin/python3 $path");
+            $command = escapeshellcmd("/usr/bin/env python3 $path");
             $output = shell_exec($command);
             return new Statistic(json_decode($output));
           } catch (\Throwable $th) {

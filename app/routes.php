@@ -29,16 +29,28 @@ return function (App $app) {
     return $response;
   });
 
-  $app->get('/test', function (Request $request, Response $response) {
-    $payload = json_encode([
-      'ip' => $_SERVER['SERVER_ADDR'],
-      'hostname' => $_SERVER['SERVER_NAME']
-    ]);
-    $response
-      ->withHeader('Content-Type', 'text/html')
-      ->getBody()
-      ->write($payload);
-    return $response;
+  $app->group('/test', function (Group $group) {
+    $group->get('', function (Request $request, Response $response) {
+      $payload = json_encode([
+        'ip' => $_SERVER['SERVER_ADDR'],
+        'hostname' => $_SERVER['SERVER_NAME']
+      ]);
+      $response
+        ->withHeader('Content-Type', 'text/html')
+        ->getBody()
+        ->write($payload);
+      return $response;
+    });
+    
+    $group->get('/script', function (Request $request, Response $response) {
+      $command = escapeshellcmd('/usr/bin/env python3 /home/pi/nursery/scripts/test.py');
+      $output = shell_exec($command);
+      $response
+        ->withHeader('Content-Type', 'application/json')
+        ->getBody()
+        ->write($output);
+      return $response;
+    });
   });
 
   $app->group('/api', function (Group $group) {

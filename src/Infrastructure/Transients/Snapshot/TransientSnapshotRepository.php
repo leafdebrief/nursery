@@ -15,7 +15,7 @@ class TransientSnapshotRepository implements SnapshotRepository
     public function getSnapshot(): Snapshot
     {
         try {
-          $command = escapeshellcmd('sudo /usr/bin/python3 /home/pi/nursery/scripts/readsensors.py');
+          $command = escapeshellcmd('/usr/bin/env python3 /home/pi/nursery/scripts/readsensors.py');
           $output = shell_exec($command);
           return new Snapshot(json_decode($output));
         } catch (\Throwable $th) {
