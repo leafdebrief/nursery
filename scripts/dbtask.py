@@ -37,8 +37,8 @@ try:
 
 
     for (library, label, seesaw, address) in cursor:
-        print(f"First Name: {first_name}, Last Name: {last_name}")
-    
+        print(f"Library: {library}, Label: {label}, Seesaw: {seesaw}, Address: {address}")
+
     # Create library object using our Bus I2C port
     i2c = busio.I2C(board.SCL, board.SDA)
 

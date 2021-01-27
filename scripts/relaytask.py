@@ -30,7 +30,7 @@ try:
     GPIO.output(pin4, 0)
 
 except KeyboardInterrupt:
-    print "Cancelled script"
+    print("Cancelled script")
 
 finally:
     GPIO.cleanup()
