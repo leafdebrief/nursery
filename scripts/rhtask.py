@@ -4,11 +4,19 @@ import board
 import busio
 import asyncio
 import adafruit_si7021
+import adafruit_shtc3
 from kasa import SmartStrip, Discover
 
 # Create library object using our Bus I2C port
 i2c = busio.I2C(board.SCL, board.SDA)
-si7021 = adafruit_si7021.SI7021(i2c)
+
+si7021_success = True
+
+try:
+  si7021 = adafruit_si7021.SI7021(i2c)
+except:
+  si7021_success = False
+  shtc3 = adafruit_shtc3.SHTC3(i2c)
 
 rh_min = 45
 rh_max = 50
@@ -22,7 +30,7 @@ for addr, dev in devices.items():
         print("Found humidifier")
 
         while True:
-            humidity = si7021.relative_humidity
+            humidity = si7021.relative_humidity if si7021_success else shtc3.relative_humidity
 
             print(f"Humidity: {humidity}% RH")
 

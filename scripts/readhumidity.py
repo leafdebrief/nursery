@@ -25,10 +25,12 @@ except:
 
 now = datetime.now()
 
+relative_humidity = si7021.relative_humidity if si7021_success else shtc3.relative_humidity
+
 # a Python object (dict):
 output = {
   "timestamp": now,
-  "value": si7021.relative_humidity if si7021_success else shtc3.relative_humidity
+  "value": relative_humidity
 }
 
 # the result is a JSON string:
