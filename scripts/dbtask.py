@@ -6,6 +6,7 @@ import busio
 import adafruit_si7021
 import adafruit_as7341
 import adafruit_lps2x
+import adafruit_shtc3
 import mysql.connector as mariadb
 from datetime import datetime
 from adafruit_seesaw.seesaw import Seesaw
@@ -42,11 +43,14 @@ try:
     # Create library object using our Bus I2C port
     i2c = busio.I2C(board.SCL, board.SDA)
 
+    si7021_success = True
+
     try:
-        si7021 = adafruit_si7021.SI7021(i2c)
+      si7021 = adafruit_si7021.SI7021(i2c)
     except:
-        print("SI7021 unavailable")
-        si7021 = False
+      print("SI7021 unavailable")
+      si7021_success = False
+      shtc3 = adafruit_shtc3.SHTC3(i2c)
 
     try:
         as7341 = adafruit_as7341.AS7341(i2c)
@@ -69,10 +73,13 @@ try:
     # Main loop
     while True:
 
+        temperature = si7021.temperature if si7021_success else shtc3.temperature
+        relative_humidity = si7021.relative_humidity if si7021_success else shtc3.relative_humidity
+
         # Print logging info
         if si7021:
-            print("\nTemperature: %0.1f°C" % si7021.temperature)
-            print("Humidity: %0.1f%%" % si7021.relative_humidity)
+            print("\nTemperature: %0.1f°C" % temperature)
+            print("Humidity: %0.1f%%" % relative_humidity)
 
         if as7341:
             print("\nSpectral:")
@@ -94,8 +101,8 @@ try:
         # MariaDB inserts
         try:
             now = datetime.now()
-            cursor.execute("INSERT INTO temperature (timestamp, value) VALUES (%s, %s)", (now, si7021.temperature))
-            cursor.execute("INSERT INTO humidity (timestamp, value) VALUES (%s, %s)", (now, si7021.relative_humidity))
+            cursor.execute("INSERT INTO temperature (timestamp, value) VALUES (%s, %s)", (now, temperature))
+            cursor.execute("INSERT INTO humidity (timestamp, value) VALUES (%s, %s)", (now, relative_humidity))
             cursor.execute("INSERT INTO spectral (timestamp, f1, f2, f3, f4, f5, f6, f7, f8) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)", (
               now,
               as7341.channel_415nm,
