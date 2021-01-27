@@ -5,7 +5,7 @@ pin1 = 31
 pin2 = 33
 pin3 = 35
 pin4 = 37
-
+time.sleep(10)
 try:
     GPIO.setmode(GPIO.BOARD)
     GPIO.setup(pin1, GPIO.OUT)
