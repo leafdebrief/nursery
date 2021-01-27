@@ -1,0 +1,12 @@
+[Unit]
+Description=Camera server service
+After=multi-user.target
+
+[Service]
+Type=idle
+User=pi
+ExecStart=/usr/bin/python3 /home/pi/camserver.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
