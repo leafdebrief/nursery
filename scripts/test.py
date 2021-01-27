@@ -10,7 +10,8 @@ def convertdate(o):
 now = datetime.now()
 
 output = {
-  "timestamp": now
+  "timestamp": now,
+  "paths": '\n'.join(sys.path)
 }
 
 # the result is a JSON string:
