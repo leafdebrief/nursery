@@ -33,6 +33,11 @@ class Snapshot implements JsonSerializable
     private $moisture;
 
     /**
+     * @var float
+     */
+    private $pressure;
+
+    /**
      * @param string $timestamp
      * @param float $temperature
      * @param float $humidity
@@ -46,6 +51,7 @@ class Snapshot implements JsonSerializable
       $this->humidity = $snapshot->humidity;
       $this->spectral = $snapshot->spectral;
       $this->moisture = $snapshot->moisture;
+      $this->pressure = $snapshot->pressure;
     }
 
     /**
@@ -81,6 +87,22 @@ class Snapshot implements JsonSerializable
     }
 
     /**
+     * @return int
+     */
+    public function getMoisture(): int
+    {
+        return $this->moisture;
+    }
+
+    /**
+     * @return float
+     */
+    public function getPressure(): float
+    {
+        return $this->pressure;
+    }
+
+    /**
      * @return array
      */
     public function jsonSerialize()
@@ -90,7 +112,8 @@ class Snapshot implements JsonSerializable
             'temperature' => $this->temperature,
             'humidity' => $this->humidity,
             'spectral' => $this->spectral,
-            'moisture' => $this->moisture
+            'moisture' => $this->moisture,
+            'pressure' => $this->pressure
         ];
     }
 }
