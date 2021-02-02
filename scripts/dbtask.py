@@ -30,15 +30,15 @@ try:
     cursor = conn.cursor()
 
     try:
-        cursor.execute("SELECT library, label, seesaw, address FROM sensors")
+        cursor.execute("SELECT library, label, seesaw FROM sensors")
     except mariadb.Error as e:
         print(f"Error getting sensor list: {e}")
         sys.exit(1)
 
 
 
-    for (library, label, seesaw, address) in cursor:
-        print(f"Library: {library}, Label: {label}, Seesaw: {seesaw}, Address: {address}")
+    # for (library, label, seesaw, address) in cursor:
+    #     print(f"Library: {library}, Label: {label}, Seesaw: {seesaw}, Address: {address}")
 
     # Create library object using our Bus I2C port
     i2c = busio.I2C(board.SCL, board.SDA)
