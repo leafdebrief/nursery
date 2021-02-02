@@ -11,6 +11,10 @@ use App\Application\Actions\Statistic\CurrentStatisticAction;
 use App\Application\Actions\Spectrum\ListSpectraAction;
 use App\Application\Actions\Spectrum\ViewSpectrumAction;
 use App\Application\Actions\Snapshot\GetSnapshotAction;
+use App\Application\Actions\Module\ListModulesAction;
+use App\Application\Actions\Module\ViewModuleAction;
+use App\Application\Actions\Dashboard\ListDashboardItemsAction;
+use App\Application\Actions\Dashboard\ViewDashboardItemAction;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
@@ -59,6 +63,16 @@ return function (App $app) {
     $group->group('/sensors', function (Group $group) {
       $group->get('', ListSensorsAction::class);
       $group->get('/{id}', ViewSensorAction::class);
+    });
+
+    $group->group('/modules', function (Group $group) {
+      $group->get('', ListModulesAction::class);
+      $group->get('/{id}', ViewModuleAction::class);
+    });
+
+    $group->group('/dashboard', function (Group $group) {
+      $group->get('', ListDashboardItemsAction::class);
+      $group->get('/{id}', ViewDashboardItemAction::class);
     });
 
     $group->group('/statistics', function (Group $group) {

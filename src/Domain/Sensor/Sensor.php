@@ -15,12 +15,17 @@ class Sensor implements JsonSerializable
     /**
      * @var string
      */
-    private $name;
+    private $library;
 
     /**
      * @var string
      */
-    private $table_id;
+    private $label;
+
+    /**
+     * @var boolean
+     */
+    private $seesaw;
 
     /**
      * @return int|null
@@ -33,17 +38,25 @@ class Sensor implements JsonSerializable
     /**
      * @return string
      */
-    public function getName(): string
+    public function getLibrary(): string
     {
-        return $this->name;
+        return $this->library;
     }
 
     /**
      * @return string
      */
-    public function getTableId(): string
+    public function getLabel(): string
     {
-        return $this->table_id;
+        return $this->label;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getSeesaw(): bool
+    {
+        return $this->seesaw;
     }
 
     /**
@@ -52,9 +65,10 @@ class Sensor implements JsonSerializable
     public function jsonSerialize()
     {
         return [
-            'id' => $this->id,
-            'name' => $this->name,
-            'table_id' => $this->table_id
+            'id' => (int)$this->id,
+            'library' => $this->library,
+            'label' => $this->label,
+            'seesaw' => (bool)$this->seesaw
         ];
     }
 }
