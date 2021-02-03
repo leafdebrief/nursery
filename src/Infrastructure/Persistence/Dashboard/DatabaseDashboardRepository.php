@@ -3,36 +3,16 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Dashboard;
 
+use App\Infrastructure\Persistence\Database;
 use App\Domain\Dashboard\DashboardItem;
 use App\Domain\Dashboard\DashboardItemNotFoundException;
 use App\Domain\Dashboard\DashboardRepository;
 
-class DatabaseDashboardRepository implements DashboardRepository
+class DatabaseDashboardRepository extends Database implements DashboardRepository
 {
-    /**
-     * @var \PDO
-     */
-    private $pdo;
-
-    /**
-     * InMemoryUserRepository constructor.
-     *
-     * @param array|null $users
-     */
-    public function __construct()
+  public function __construct()
     {
-        
-        $dsn = "mysql:host=localhost;dbname=nursery;charset=utf8mb4";
-        $options = [
-            \PDO::ATTR_ERRMODE            => \PDO::ERRMODE_EXCEPTION,
-            \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
-            \PDO::ATTR_EMULATE_PREPARES   => false,
-        ];
-        try {
-            $this->pdo = new \PDO($dsn, 'root', 'kl99l9jk', $options);
-        } catch (\PDOException $e) {
-            throw new \PDOException($e->getMessage(), (int)$e->getCode());
-        }
+        parent::__construct();
     }
 
     /**
