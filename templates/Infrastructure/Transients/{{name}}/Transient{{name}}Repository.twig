@@ -1,0 +1,25 @@
+<?php
+declare(strict_types=1);
+
+namespace App\Infrastructure\Transients\{{name}};
+
+use App\Domain\{{name}}\{{(singular?:name)}};
+use App\Domain\{{name}}\{{(singular?:name)}}UnavailableException;
+use App\Domain\{{name}}\{{name}}Repository;
+
+class Transient{{name}}Repository implements {{name}}Repository
+{
+    /**
+     * {@inheritdoc}
+     */
+    public function get{{(singular?:name)}}(): {{(singular?:name)}}
+    {
+        try {
+          $command = escapeshellcmd('sudo python3 /home/pi/nursery/scripts/read{{(plural?:name)|lower}}.py');
+          $output = shell_exec($command);
+          return new {{(singular?:name)}}(json_decode($output));
+        } catch (\Throwable $th) {
+          throw new {{(singular?:name)}}UnavailableException();
+        }
+    }
+}

@@ -15,6 +15,8 @@ use App\Application\Actions\Module\ListModulesAction;
 use App\Application\Actions\Module\ViewModuleAction;
 use App\Application\Actions\Dashboard\ListDashboardItemsAction;
 use App\Application\Actions\Dashboard\ViewDashboardItemAction;
+use App\Application\Actions\Category\ListCategoriesAction;
+use App\Application\Actions\Category\ViewCategoryAction;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
@@ -68,6 +70,11 @@ return function (App $app) {
     $group->group('/modules', function (Group $group) {
       $group->get('', ListModulesAction::class);
       $group->get('/{id}', ViewModuleAction::class);
+    });
+
+    $group->group('/categories', function (Group $group) {
+      $group->get('', ListCategoriesAction::class);
+      $group->get('/{id}', ViewCategoryAction::class);
     });
 
     $group->group('/dashboard', function (Group $group) {

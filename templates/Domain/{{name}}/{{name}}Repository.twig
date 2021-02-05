@@ -1,0 +1,19 @@
+<?php
+declare(strict_types=1);
+
+namespace App\Domain\{{name}};
+
+interface {{name}}Repository
+{
+    /**
+     * @return {{singular?:name}}[]
+     */
+    public function findAll(): array;
+
+    /**
+     * @param int $id
+     * @return {{singular?:name}}
+     * @throws {{singular?:name}}NotFoundException
+     */
+    public function find{{singular?:name}}OfId(int $id): {{singular?:name}};
+}

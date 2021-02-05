@@ -1,0 +1,43 @@
+<?php
+declare(strict_types=1);
+
+namespace App\Infrastructure\Persistence\{{name}};
+
+use App\Infrastructure\Persistence\Database;
+use App\Domain\{{name}}\{{singular?:name}};
+use App\Domain\{{name}}\{{singular?:name}}NotFoundException;
+use App\Domain\{{name}}\{{name}}Repository;
+
+class Database{{name}}Repository extends Database implements {{name}}Repository
+{
+    public function __construct()
+    {
+      parent::__construct();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function findAll(): array
+    {
+      $stmt = $this->pdo->prepare('SELECT * FROM {{database}}');
+      $stmt->execute();
+      $stmt->setFetchMode(\PDO::FETCH_CLASS, '\App\Domain\{{name}}\{{singular?:name}}');
+      return $stmt->fetchAll();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function find{{singular?:name}}OfId(int $id): {{singular?:name}}
+    {
+        $stmt = $this->pdo->prepare('SELECT * FROM {{database}} WHERE id = ?');
+        $stmt->execute([$id]);
+        $stmt->setFetchMode(\PDO::FETCH_CLASS, '\App\Domain\{{name}}\{{singular?:name}}');
+        ${{(singular?:name)|lcfirst}} = $stmt->fetch();
+        if (!${{(singular?:name)|lcfirst}}) {
+          throw new {{singular?:name}}NotFoundException();
+        }
+        return ${{(singular?:name)|lcfirst}};
+    }
+}

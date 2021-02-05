@@ -1,0 +1,21 @@
+<?php
+declare(strict_types=1);
+
+namespace App\Application\Actions\{{name}};
+
+use Psr\Http\Message\ResponseInterface as Response;
+
+class List{{plural?:name}}Action extends {{name}}Action
+{
+    /**
+     * {@inheritdoc}
+     */
+    protected function action(): Response
+    {
+        ${{(plural?:name)|lcfirst}} = $this->{{name|lcfirst}}Repository->findAll();
+
+        $this->logger->info("{{(plural?:name)|pascalplain}} list was viewed.");
+
+        return $this->respondWithData(${{(plural?:name)|lcfirst}});
+    }
+}
