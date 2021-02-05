@@ -8,12 +8,14 @@ use App\Domain\Spectrum\SpectralRepository;
 use App\Domain\Snapshot\SnapshotRepository;
 use App\Domain\Module\ModuleRepository;
 use App\Domain\Dashboard\DashboardRepository;
+use App\Domain\Category\CategoryRepository;
 use App\Infrastructure\Persistence\User\InMemoryUserRepository;
 use App\Infrastructure\Persistence\Sensor\DatabaseSensorRepository;
 use App\Infrastructure\Persistence\Statistic\DatabaseStatisticRepository;
 use App\Infrastructure\Persistence\Spectrum\DatabaseSpectralRepository;
 use App\Infrastructure\Persistence\Module\DatabaseModuleRepository;
 use App\Infrastructure\Persistence\Dashboard\DatabaseDashboardRepository;
+use App\Infrastructure\Persistence\Category\DatabaseCategoryRepository;
 use App\Infrastructure\Transients\Snapshot\TransientSnapshotRepository;
 use DI\ContainerBuilder;
 
@@ -27,5 +29,6 @@ return function (ContainerBuilder $containerBuilder) {
         SnapshotRepository::class => \DI\autowire(TransientSnapshotRepository::class),
         ModuleRepository::class => \DI\autowire(DatabaseModuleRepository::class),
         DashboardRepository::class => \DI\autowire(DatabaseDashboardRepository::class),
+        CategoryRepository::class => \DI\autowire(DatabaseCategoryRepository::class),
     ]);
 };

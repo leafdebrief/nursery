@@ -1,0 +1,53 @@
+<?php
+declare(strict_types=1);
+
+namespace App\Domain\{{name}};
+
+use JsonSerializable;
+
+class {{singular?:name}} implements JsonSerializable
+{
+    /**
+     * @var int|null
+     */
+    private $id;
+{% for attr in attrs %}
+
+    /**
+     * @var {{attr.type?:'string'}}
+     */
+    private ${{attr.name}};
+{% endfor %}
+
+    /**
+     * @return int|null
+     */
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+{% for attr in attrs %}
+
+    /**
+     * @return {{attr.type?:'string'}}
+     */
+    public function get{{attr.name|snakepascal}}(): {{attr.type?:'string'}}
+    {
+        return $this->{{attr.name}};
+    }
+{% endfor %}
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return [
+            'id' => (int)$this->id,
+{% for attr in attrs %}
+            '{{attr.name}}' => {% if attr.type %}({{attr.type}}){% endif%}$this->{{attr.name}}{% if loop.last == false  %},{% endif %}
+
+{% endfor %}
+        ];
+    }
+}

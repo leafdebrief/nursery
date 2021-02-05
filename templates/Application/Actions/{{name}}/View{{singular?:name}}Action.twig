@@ -1,0 +1,22 @@
+<?php
+declare(strict_types=1);
+
+namespace App\Application\Actions\{{name}};
+
+use Psr\Http\Message\ResponseInterface as Response;
+
+class View{{singular?:name}}Action extends {{name}}Action
+{
+    /**
+     * {@inheritdoc}
+     */
+    protected function action(): Response
+    {
+        ${{(singular?:name)|lcfirst}}Id = (int) $this->resolveArg('id');
+        ${{(singular?:name)|lcfirst}} = $this->{{(singular?:name)|lcfirst}}Repository->find{{singular?:name}}OfId(${{(singular?:name)|lcfirst}}Id);
+
+        $this->logger->info("{{(singular?:name)|pascalplain}} of id `${{ '{' }}{{(singular?:name)|lcfirst}}Id}` was viewed.");
+
+        return $this->respondWithData(${{(singular?:name)|lcfirst}});
+    }
+}

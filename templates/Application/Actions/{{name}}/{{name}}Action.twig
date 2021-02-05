@@ -1,0 +1,26 @@
+<?php
+declare(strict_types=1);
+
+namespace App\Application\Actions\{{name}};
+
+use App\Application\Actions\Action;
+use App\Domain\{{name}}\{{name}}Repository;
+use Psr\Log\LoggerInterface;
+
+abstract class {{name}}Action extends Action
+{
+    /**
+     * @var {{name}}Repository
+     */
+    protected ${{name|lower}}Repository;
+
+    /**
+     * @param LoggerInterface $logger
+     * @param {{name}}Repository  ${{name|lower}}Repository
+     */
+    public function __construct(LoggerInterface $logger, {{name}}Repository ${{name|lower}}Repository)
+    {
+        parent::__construct($logger);
+        $this->{{name|lower}}Repository = ${{name|lower}}Repository;
+    }
+}
