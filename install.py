@@ -68,7 +68,7 @@ def install_nursery():
         shell.remove(f"{home_dir}/nursery")
 
     print("Installing Nursery APT dependencies")
-    shell.run_command("sudo apt-get install -y git nginx php-fpm php-xml php-cli php-zip unzip php7.3-mysql php7.3-mbstring mariadb-server python3 python3-pip libgpiod2 python3-picamera")
+    shell.run_command("sudo apt-get install -y git nginx certbot python-certbot-nginx php-fpm php-xml php-cli php-zip unzip php7.3-mysql php7.3-mbstring mariadb-server python3 python3-pip libgpiod2 python3-picamera")
     print("Installing Nursery PHP dependencies")
     shell.run_command(f"git clone https://github.com/leafdebrief/nursery.git {home_dir}/nursery")
     shell.run_command(f"php -r \"copy('https://getcomposer.org/installer', '{home_dir}/composer-setup.php');\"")
@@ -87,6 +87,9 @@ def install_nursery():
     shell.run_command("sudo chmod 644 /lib/systemd/system/nursery-{cam,db}.service")
     shell.run_command("sudo systemctl daemon-reload")
     shell.run_command("sudo systemctl enable nursery-db nursery-cam")
+    # shell.run_command("sudo mysql_secure_installation")
+    # shell.run_command(f"mysql -u username -p database_name < {home_dir}/nursery/scripts/sql/nursery.sql")
+    # shell.run_command("sudo certbot --nginx")
 
 def main():
     global default_python
