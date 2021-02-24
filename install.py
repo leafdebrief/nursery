@@ -5,6 +5,7 @@ except ImportError:
 import os
 import getpass
 import argparse
+import nginx
 
 shell = Shell()
 shell.group="Nursery"
@@ -77,7 +78,7 @@ def install_nursery(home_dir="/home/pi"):
     shell.run_command("sudo php composer-setup.php --install-dir=/usr/local/bin --filename=composer")
     shell.run_command(f"composer install -d {home_dir}/nursery -n", False, True)
     print("Installing Nursery Python dependencies")
-    shell.run_command("sudo pip3 install mysql-connector-python adafruit-circuitpython-ads1x15 adafruit-circuitpython-as7341 adafruit-circuitpython-si7021 adafruit-circuitpython-lps35hw adafruit-circuitpython-seesaw adafruit-circuitpython-dht adafruit-circuitpython-ahtx0")
+    shell.run_command("sudo pip3 install python-nginx mysql-connector-python adafruit-circuitpython-ads1x15 adafruit-circuitpython-as7341 adafruit-circuitpython-si7021 adafruit-circuitpython-lps35hw adafruit-circuitpython-seesaw adafruit-circuitpython-dht adafruit-circuitpython-ahtx0")
     print("Ensuring Nursery is writable")
     shell.run_command(f"touch {home_dir}/nursery/logs/app.log")
     shell.run_command(f"sudo chown -R www-data:www-data {home_dir}/nursery/logs")
@@ -88,7 +89,6 @@ def install_nursery(home_dir="/home/pi"):
     shell.run_command("sudo chmod 644 /lib/systemd/system/nursery-{cam,db}.service")
     shell.run_command("sudo systemctl daemon-reload")
     shell.run_command("sudo systemctl enable nursery-db nursery-cam")
-    # shell.run_command("sudo certbot --nginx")
     
 def install_database(home_dir="/home/pi"):
     shell.print_colored("Configuring your MySQL database for Jasper's Nursery", "cyan")
@@ -112,6 +112,36 @@ def install_database(home_dir="/home/pi"):
     shell.run_command(f"mysql -u root -p {password} -e \"FLUSH PRIVILEGES;\"")
     print("Setting up tables")
     shell.run_command(f"mysql -u username -p {password} < {home_dir}/nursery/scripts/sql/nursery.sql")
+
+def install_server(home_dir="/home/pi"):
+    print("Loading template server")
+    c = nginx.loadf(f"{home_dir}/nursery/nursery.leafdebrief.com")
+    print("Configuring server blocks")
+    c.server.add(
+        nginx.Location(
+            '/home',
+            nginx.Key('alias', f"{home_dir}/nursery/public/home"),
+            nginx.Key('try_files', '$uri $uri/ /home/index.html')
+        )
+    )
+    c.server.add(nginx.Key('root', f"{home_dir}/nursery/public"))
+    
+    src = '/etc/nginx/sites-available/nursery'
+    dest = '/etc/nginx/sites-enabled/nursery'
+    
+    print("Copying server config to sites-available")
+    nginx.dumpf(c, src)
+    print("Symlinking server config into sites-enabled")
+    os.symlink(src, dest)
+    
+    print("Reloading server")
+    shell.run_command("sudo service nginx reload")
+    shell.print_colored("""
+Server has been reloaded!
+
+Please run \"sudo certbot --nginx\" after this installation if you
+have a domain name and intend to configure HTTPS (recommended).
+""", 'orange')
 
 def main():
     global default_python
@@ -168,6 +198,7 @@ sMM- .d     omMMMNy-     /MNo   sy+-  -+sys+-  +NNNNNMM.  oMN+  `hy+- .+os/
         update_pip()
         install_blinka()
         install_nursery(home_dir)
+        install_server(home_dir)
 
     install_database(home_dir)
 
