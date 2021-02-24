@@ -3,6 +3,8 @@ try:
 except ImportError:
     raise RuntimeError("The library 'adafruit_shell' was not found. To install, try typing: sudo pip3 install adafruit-python-shell")
 import os
+import getpass
+import argparse
 
 shell = Shell()
 shell.group="Nursery"
@@ -58,8 +60,7 @@ def install_blinka():
     shell.run_command("pip3 install --upgrade RPi.GPIO")
     shell.run_command("pip3 install --upgrade adafruit-blinka")
 
-def install_nursery():
-    home_dir = os.path.expanduser(shell.run_command("echo ~${SUDO_USER}", False, True))
+def install_nursery(home_dir="/home/pi"):
     print(f"Setting up Jasper's Nursery in {home_dir}")
 
     if shell.exists(f"{home_dir}/nursery"):
@@ -87,15 +88,47 @@ def install_nursery():
     shell.run_command("sudo chmod 644 /lib/systemd/system/nursery-{cam,db}.service")
     shell.run_command("sudo systemctl daemon-reload")
     shell.run_command("sudo systemctl enable nursery-db nursery-cam")
-    # shell.run_command("sudo mysql_secure_installation")
-    # shell.run_command(f"mysql -u username -p database_name < {home_dir}/nursery/scripts/sql/nursery.sql")
     # shell.run_command("sudo certbot --nginx")
+    
+def install_database(home_dir="/home/pi"):
+    shell.print_colored("Configuring your MySQL database for Jasper's Nursery", "cyan")
+    
+    password = getpass.getpass(prompt='Please enter a new MySQL root password: ')
+    verify = getpass.getpass(prompt='Type again to verify: ')
+    
+    if password != verify:
+        shell.bail("Passwords do not match, please try again by running the installer script again with the '--db-only' (-d) option")
+
+    shell.run_command(f"mysqladmin password '{password}'")
+    print("Deleting anonymous users")
+    shell.run_command(f"mysql -u root -p {password} -e \"DELETE FROM mysql.user WHERE User='';\"")
+    print("Disabling remote root login")
+    shell.run_command(f"mysql -u root -p {password} -e \"DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');\"")
+    print("Removing test databases")
+    shell.run_command(f"mysql -u root -p {password} -e \"DROP DATABASE test;\"")
+    print("Removing test database users")
+    shell.run_command(f"mysql -u root -p {password} -e \"DELETE FROM mysql.db WHERE Db='test' OR Db='test\_%';")
+    print("Flushing table privileges")
+    shell.run_command(f"mysql -u root -p {password} -e \"FLUSH PRIVILEGES;\"")
+    print("Setting up tables")
+    shell.run_command(f"mysql -u username -p {password} < {home_dir}/nursery/scripts/sql/nursery.sql")
 
 def main():
     global default_python
+    
     shell.clear()
+    
     # Check Raspberry Pi and Bail
     pi_model = shell.get_board_model()
+    
+    # Get user home directory
+    home_dir = os.path.expanduser(shell.run_command("echo ~${SUDO_USER}", False, True))
+    
+    # Get command line args
+    parser = argparse.ArgumentParser(description="Install Jasper's Nursery")
+    parser.add_argument('-d', '--db-only', action='store_true', help='only setup database')
+    args = parser.parse_args()
+    
     shell.print_colored("""
   ___                        
  (   >                  o    
@@ -114,8 +147,8 @@ oMM-`mM+   yMMMMMMMMo    yMMo `hMMM:+mMMMMMMMm.+MMNhhhy`  dMM/ `mMMN. .MMMd
 sMM- .d     omMMMNy-     /MNo   sy+-  -+sys+-  +NNNNNMM.  oMN+  `hy+- .+os/     
 
 """, 'green')
-    shell.print_colored("This script  will configure your Raspberry Pi and install requirements.", 'green')
-    print("\n\n{} detected.\n".format(pi_model))
+    shell.print_colored("This script  will configure your Raspberry Pi and install requirements.", 'cyan')
+    print("\n{} detected.\n".format(pi_model))
     if not shell.is_raspberry_pi():
         shell.bail("Non-Raspberry Pi board detected. This must be run on a Raspberry Pi")
     if shell.get_os() != "Raspbian":
@@ -127,12 +160,16 @@ sMM- .d     omMMMNy-     /MNo   sy+-  -+sys+-  +NNNNNMM.  oMN+  `hy+- .+os/
         default_python = 2
         if not shell.prompt("Continue?"):
             shell.exit()
-    sys_update()
-    set_raspiconfig()
-    update_python()
-    update_pip()
-    install_blinka()
-    install_nursery()
+
+    if not args.db_only:
+        sys_update()
+        set_raspiconfig()
+        update_python()
+        update_pip()
+        install_blinka()
+        install_nursery(home_dir)
+
+    install_database(home_dir)
 
     # Done
     print("""DONE.
