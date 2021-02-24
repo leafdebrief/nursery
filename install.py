@@ -158,6 +158,8 @@ def main():
         if not shell.prompt("It looks like Jasper's Nursery is already installed. Would you like to reinstall it?"):
             shell.bail("Cancelling installation")
         shell.remove(f"{home_dir}/nursery")
+        if shell.exists("/etc/nginx/sites-enabled/nursery"):
+            shell.remove("/etc/nginx/sites-enabled/nursery")
     
     # Get command line args
     parser = argparse.ArgumentParser(description="Install Jasper's Nursery")
