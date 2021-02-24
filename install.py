@@ -64,11 +64,6 @@ def install_blinka():
 def install_nursery(home_dir="/home/pi"):
     print(f"Setting up Jasper's Nursery in {home_dir}")
 
-    if shell.exists(f"{home_dir}/nursery"):
-        if not shell.prompt("It looks like Jasper's Nursery is already installed. Would you like to reinstall it?"):
-            shell.bail("Cancelling installation")
-        shell.remove(f"{home_dir}/nursery")
-
     print("Installing Nursery APT dependencies")
     shell.run_command("sudo apt-get install -y git nginx certbot python-certbot-nginx php-fpm php-xml php-cli php-zip unzip php7.3-mysql php7.3-mbstring mariadb-server python3 python3-pip libgpiod2 python3-picamera")
     print("Installing Nursery PHP dependencies")
@@ -153,6 +148,11 @@ def main():
     
     # Get user home directory
     home_dir = os.path.expanduser(shell.run_command("echo ~${SUDO_USER}", False, True))
+    
+    if shell.exists(f"{home_dir}/nursery"):
+        if not shell.prompt("It looks like Jasper's Nursery is already installed. Would you like to reinstall it?"):
+            shell.bail("Cancelling installation")
+        shell.remove(f"{home_dir}/nursery")
     
     # Get command line args
     parser = argparse.ArgumentParser(description="Install Jasper's Nursery")
