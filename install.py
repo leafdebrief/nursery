@@ -152,7 +152,7 @@ def main():
     pi_model = shell.get_board_model()
     
     # Get user home directory
-    home_dir = os.path.expanduser(shell.run_command("echo ~${SUDO_USER}", False, True))
+    home_dir = os.path.expanduser(shell.run_command("echo ~${SUDO_USER}", True, True))
     
     if shell.exists(f"{home_dir}/nursery"):
         if not shell.prompt("It looks like Jasper's Nursery is already installed. Would you like to reinstall it?"):
