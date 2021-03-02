@@ -74,7 +74,7 @@ def install_nursery(home_dir="/home/pi"):
     print("Installing Nursery PHP dependencies")
     shell.run_command(f"composer install -d {home_dir}/nursery -n")
     print("Installing Nursery Python dependencies")
-    shell.run_command("sudo pip3 install python-nginx mysql-connector-python adafruit-circuitpython-ads1x15 adafruit-circuitpython-as7341 adafruit-circuitpython-si7021 adafruit-circuitpython-lps35hw adafruit-circuitpython-seesaw adafruit-circuitpython-dht adafruit-circuitpython-ahtx0")
+    shell.run_command("sudo pip3 install python-nginx mysql-connector-python adafruit-circuitpython-ads1x15 adafruit-circuitpython-as7341 adafruit-circuitpython-si7021 adafruit-circuitpython-lps35hw adafruit-circuitpython-seesaw adafruit-circuitpython-dht adafruit-circuitpython-ahtx0 adafruit-circuitpython-ltr390 adafruit-circuitpython-ccs811")
     print("Ensuring Nursery is writable")
     shell.run_command(f"touch {home_dir}/nursery/logs/app.log")
     shell.run_command(f"sudo chown -R www-data:www-data {home_dir}/nursery/logs")
