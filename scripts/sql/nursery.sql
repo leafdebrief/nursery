@@ -91,9 +91,23 @@ CREATE TABLE IF NOT EXISTS `temperature` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5961 DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE IF NOT EXISTS `light` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `timestamp` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `value` float NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5961 DEFAULT CHARSET=utf8mb4;
+
+
+CREATE TABLE IF NOT EXISTS `ultraviolet` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `timestamp` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `value` float NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5961 DEFAULT CHARSET=utf8mb4;
 
 ALTER TABLE `dashboard`
-  ADD CONSTRAINT `dashboard_ibfk_1` FOREIGN KEY (`module_id`) REFERENCES `modules` (`id`);
+  ADD CONSTRAINT `module_relation` FOREIGN KEY (`module_id`) REFERENCES `modules` (`id`);
 
 ALTER TABLE `modules`
   ADD CONSTRAINT `category_relation` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`),
