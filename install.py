@@ -5,7 +5,7 @@ except ImportError:
 import os
 import getpass
 import argparse
-import nginx
+import importlib
 
 shell = Shell()
 shell.group="Nursery"
@@ -115,6 +115,7 @@ def install_database(home_dir="/home/pi"):
 
 def install_server(home_dir="/home/pi"):
     print("Loading template server")
+    nginx = importlib.import_module('nginx')
     c = nginx.loadf(f"{home_dir}/nursery/nursery.leafdebrief.com")
     print("Configuring server blocks")
     c.server.add(
@@ -208,11 +209,15 @@ sMM- .d     omMMMNy-     /MNo   sy+-  -+sys+-  +NNNNNMM.  oMN+  `hy+- .+os/
         install_server(home_dir)
 
     install_database(home_dir)
+    
+    
+    if shell.prompt("Installation complete; test sensors?", default="y"):
+        shell.run_command(f"sudo python3 {home_dir}/nursery/scripts/readsensors.py")
 
     # Done
     print("""DONE.
 
-Settings take effect on next boot.
+Some settings will take effect on next boot.
 """)
     if not shell.prompt("REBOOT NOW?", default="y"):
         print("Exiting without reboot.")
